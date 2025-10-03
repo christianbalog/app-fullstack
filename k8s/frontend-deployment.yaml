@@ -13,6 +13,8 @@ spec:
       labels:
         app: frontend
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: frontend
         image: israelbalog01/auth-frontend:latest

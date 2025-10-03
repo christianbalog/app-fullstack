@@ -13,6 +13,8 @@ spec:
       labels:
         app: backend
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: backend
         image: israelbalog01/auth-backend:latest

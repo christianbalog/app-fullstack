@@ -18,6 +18,8 @@ kubectl apply -f frontend-configmap.yaml
 
 # 3. Créer les secrets
 kubectl apply -f postgres-secret.yaml
+# Note: Les deployments utilisent imagePullSecret "regcred"
+# Assurez-vous qu'il existe déjà dans le namespace auth-app
 
 # 4. Déployer PostgreSQL (StatefulSet avec volumeClaimTemplate)
 kubectl apply -f postgres-statefulset.yaml
