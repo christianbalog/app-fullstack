@@ -19,28 +19,25 @@ kubectl apply -f frontend-configmap.yaml
 # 3. Créer les secrets
 kubectl apply -f postgres-secret.yaml
 
-# 4. Créer le PersistentVolumeClaim pour PostgreSQL
-kubectl apply -f postgres-pvc.yaml
-
-# 5. Déployer PostgreSQL
-kubectl apply -f postgres-deployment.yaml
+# 4. Déployer PostgreSQL (StatefulSet avec volumeClaimTemplate)
+kubectl apply -f postgres-statefulset.yaml
 kubectl apply -f postgres-service.yaml
 
-# 6. Attendre que PostgreSQL soit prêt
+# 5. Attendre que PostgreSQL soit prêt
 kubectl wait --for=condition=ready pod -l app=postgres -n auth-app --timeout=120s
 
-# 7. Déployer le Backend
+# 6. Déployer le Backend
 kubectl apply -f backend-deployment.yaml
 kubectl apply -f backend-service.yaml
 
-# 8. Déployer le Frontend
+# 7. Déployer le Frontend
 kubectl apply -f frontend-deployment.yaml
 kubectl apply -f frontend-service.yaml
 
-# 9. (Optionnel) Déployer l'Ingress
+# 8. (Optionnel) Déployer l'Ingress
 kubectl apply -f ingress.yaml
 
-# 10. Vérifier le déploiement
+# 9. Vérifier le déploiement
 kubectl get all -n auth-app
 ```
 

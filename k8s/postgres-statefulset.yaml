@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   namespace: auth-app
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
@@ -18,6 +19,7 @@ spec:
         image: postgres:16-alpine
         ports:
         - containerPort: 5432
+          name: postgres
         env:
         - name: POSTGRES_DB
           valueFrom:
@@ -34,6 +36,8 @@ spec:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_PASSWORD
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
@@ -45,6 +49,8 @@ spec:
             - postgres
           initialDelaySeconds: 30
           periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         readinessProbe:
           exec:
             command:
@@ -53,7 +59,22 @@ spec:
             - postgres
           initialDelaySeconds: 5
           periodSeconds: 5
-      volumes:
-      - name: postgres-storage
-        persistentVolumeClaim:
-          claimName: postgres-pvc
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 5Gi
