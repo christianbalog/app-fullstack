@@ -1,4 +1,22 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: auth-postgres
+    environment:
+      - POSTGRES_DB=authdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: auth-backend
@@ -7,9 +25,17 @@ services:
     environment:
       - PORT=5000
       - JWT_SECRET=your-secret-key-change-in-production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=authdb
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     volumes:
       - ./backend:/app
       - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
@@ -22,3 +48,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  postgres_data:
