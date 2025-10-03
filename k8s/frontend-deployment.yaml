@@ -18,6 +18,9 @@ spec:
         image: israelbalog01/auth-frontend:latest
         ports:
         - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: frontend-config
         livenessProbe:
           httpGet:
             path: /

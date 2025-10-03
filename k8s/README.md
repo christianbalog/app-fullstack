@@ -12,28 +12,35 @@
 # 1. Créer le namespace
 kubectl apply -f namespace.yaml
 
-# 2. Créer les secrets
+# 2. Créer les ConfigMaps
+kubectl apply -f backend-configmap.yaml
+kubectl apply -f frontend-configmap.yaml
+
+# 3. Créer les secrets
 kubectl apply -f postgres-secret.yaml
 
-# 3. Créer le PersistentVolumeClaim pour PostgreSQL
+# 4. Créer le PersistentVolumeClaim pour PostgreSQL
 kubectl apply -f postgres-pvc.yaml
 
-# 4. Déployer PostgreSQL
+# 5. Déployer PostgreSQL
 kubectl apply -f postgres-deployment.yaml
 kubectl apply -f postgres-service.yaml
 
-# 5. Attendre que PostgreSQL soit prêt
+# 6. Attendre que PostgreSQL soit prêt
 kubectl wait --for=condition=ready pod -l app=postgres -n auth-app --timeout=120s
 
-# 6. Déployer le Backend
+# 7. Déployer le Backend
 kubectl apply -f backend-deployment.yaml
 kubectl apply -f backend-service.yaml
 
-# 7. Déployer le Frontend
+# 8. Déployer le Frontend
 kubectl apply -f frontend-deployment.yaml
 kubectl apply -f frontend-service.yaml
 
-# 8. Vérifier le déploiement
+# 9. (Optionnel) Déployer l'Ingress
+kubectl apply -f ingress.yaml
+
+# 10. Vérifier le déploiement
 kubectl get all -n auth-app
 ```
 
@@ -66,6 +73,28 @@ kubectl port-forward -n auth-app service/frontend 8080:80
 ```
 
 ## Configuration
+
+### ConfigMaps vs Secrets
+
+**ConfigMaps** (données non-sensibles):
+- `backend-configmap.yaml`: PORT, DB_HOST, DB_PORT, DB_NAME
+- `frontend-configmap.yaml`: VITE_API_URL
+
+**Secrets** (données sensibles):
+- `postgres-secret.yaml`: POSTGRES_PASSWORD, JWT_SECRET, DB_USER
+
+### Modifier les ConfigMaps
+
+**Backend:**
+```bash
+kubectl edit configmap backend-config -n auth-app
+```
+
+**Frontend:**
+```bash
+kubectl edit configmap frontend-config -n auth-app
+# Modifiez VITE_API_URL selon votre domaine
+```
 
 ### Modifier les secrets
 

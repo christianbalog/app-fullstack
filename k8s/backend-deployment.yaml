@@ -18,23 +18,15 @@ spec:
         image: israelbalog01/auth-backend:latest
         ports:
         - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: backend-config
         env:
-        - name: PORT
-          value: "5000"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: JWT_SECRET
-        - name: DB_HOST
-          value: postgres
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_DB
         - name: DB_USER
           valueFrom:
             secretKeyRef:

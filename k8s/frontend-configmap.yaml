@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: auth-app
+data:
+  # URL du backend accessible depuis le navigateur (utilisateur final)
+  # IMPORTANT: Remplacez <BACKEND-EXTERNAL-IP> par l'IP externe du service backend
+  # Obtenez l'IP avec: kubectl get service backend -n auth-app
+  #
+  # Pour development/test local (Minikube):
+  # VITE_API_URL: http://localhost:5000
+  #
+  # Pour production (Cloud):
+  # VITE_API_URL: http://<BACKEND-EXTERNAL-IP>:5000
+  VITE_API_URL: http://localhost:5000
