@@ -74,7 +74,10 @@ spec:
     spec:
       accessModes:
         - ReadWriteOnce
-      storageClassName: standard
+      # storageClassName vide = utilise la StorageClass par défaut du cluster
+      # Pour spécifier: storageClassName: standard (GKE), gp2 (EKS), managed-premium (AKS)
+      # Pour Minikube: storageClassName: standard
+      storageClassName: sbs-default
       resources:
         requests:
           storage: 5Gi
